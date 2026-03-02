@@ -590,6 +590,7 @@ export default function App() {
               radarData: parsedReport.radarData,
               feedback: parsedReport.feedback,
               contentSuggestions: parsedReport.contentSuggestions,
+              questions: parsedReport.questions,
               juryType: effectiveJury,
             },
           });
