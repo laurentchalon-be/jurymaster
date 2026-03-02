@@ -682,6 +682,74 @@ export default function App() {
     );
   }
 
+  // ─── Mode maintenance ──────────────────────────────────────────────────────────
+  const MAINTENANCE_MODE = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
+  const WHITELISTED_EMAILS = [
+    'laurent.chalon.nl25@gmail.com',
+    'laurentchalon1@gmail.com',
+    'lauuchalon@gmail.com',
+  ];
+  const isWhitelisted = user?.email && WHITELISTED_EMAILS.includes(user.email.toLowerCase());
+
+  if (MAINTENANCE_MODE && !isWhitelisted) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6">
+        <div className="max-w-md w-full text-center space-y-6">
+          {/* Logo / icône */}
+          <div className="w-20 h-20 bg-indigo-500/10 border border-indigo-500/20 rounded-3xl flex items-center justify-center mx-auto">
+            <span className="text-4xl">⚙️</span>
+          </div>
+
+          {/* Titre */}
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold text-white tracking-tight">
+              Jury<span className="text-indigo-400">Master</span>
+            </h1>
+            <p className="text-slate-400 text-sm font-medium uppercase tracking-widest">
+              Maintenance en cours
+            </p>
+          </div>
+
+          {/* Message */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-left space-y-3">
+            <p className="text-slate-200 font-semibold text-sm">
+              🚧 Nous améliorons JuryMaster pour vous !
+            </p>
+            <p className="text-slate-400 text-sm leading-relaxed">
+              Une mise à jour importante est en cours de déploiement. Le service sera de nouveau disponible très prochainement.
+            </p>
+            <p className="text-slate-500 text-xs">
+              Merci pour votre patience. 🙏
+            </p>
+          </div>
+
+          {/* Connexion admin discrète */}
+          {!user && (
+            <button
+              onClick={() => { setModalReason('launch'); setModalOpen(true); }}
+              className="text-slate-700 hover:text-slate-500 text-xs transition-colors underline underline-offset-4"
+            >
+              Connexion administrateur
+            </button>
+          )}
+          {user && !isWhitelisted && (
+            <p className="text-slate-700 text-xs">
+              Connecté en tant que {user.email} — accès non autorisé pendant la maintenance.
+            </p>
+          )}
+        </div>
+
+        {/* AuthModal nécessaire pour le bouton connexion admin */}
+        <AuthModal
+          isOpen={modalOpen}
+          reason={modalReason}
+          onClose={() => setModalOpen(false)}
+          onSignIn={signInWithGoogle}
+        />
+      </div>
+    );
+  }
+
   // Callback de reset démo (réutilisé dans PartialResultsView)
   const handleContinueDemo = () => {
     setShowUpsell(false);
