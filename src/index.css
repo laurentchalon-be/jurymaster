@@ -1,0 +1,244 @@
+@import "tailwindcss";
+
+/* ── Dark mode via classe sur <html> ──────────────────────────────────────── */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ── Tokens de couleur ────────────────────────────────────────────────────── */
+:root {
+  --bg-page: #F8FAFC;
+  --bg-surface: #ffffff;
+  --bg-surface-2: #F1F5F9;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --border: #E2E8F0;
+}
+
+html.dark {
+  --bg-page: #0F172A;
+  --bg-surface: #1E293B;
+  --bg-surface-2: #273548;
+  --text-primary: #F1F5F9;
+  --text-secondary: #CBD5E1;
+  /* plus clair que avant pour meilleure lisibilité */
+  --text-muted: #94A3B8;
+  /* aussi plus clair */
+  --border: #334155;
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color;
+  transition-duration: 0.25s;
+  transition-timing-function: ease;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+}
+
+/* ── Dark mode : overrides globaux ───────────────────────────────────────── */
+
+/* Surfaces blanches → surface sombre */
+html.dark .bg-white {
+  background-color: var(--bg-surface) !important;
+}
+
+/* Surfaces slate légères → surface-2 sombre */
+html.dark .bg-slate-50,
+html.dark .bg-slate-100 {
+  background-color: var(--bg-surface-2) !important;
+}
+
+/* Header blur */
+html.dark .bg-white\/90 {
+  background-color: rgba(15, 23, 42, 0.9) !important;
+}
+
+/* Textes foncés → clairs */
+html.dark .text-slate-900,
+html.dark .text-slate-800 {
+  color: var(--text-primary) !important;
+}
+
+html.dark .text-slate-700,
+html.dark .text-slate-600 {
+  color: var(--text-secondary) !important;
+}
+
+html.dark .text-slate-500,
+html.dark .text-slate-400 {
+  color: var(--text-muted) !important;
+}
+
+/* Bordures */
+html.dark .border-slate-200,
+html.dark .border-slate-100 {
+  border-color: var(--border) !important;
+}
+
+/* Inputs / textareas */
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: var(--bg-surface-2);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* ── Correctifs de contraste spécifiques ─────────────────────────────────── */
+
+/* Quota bar "Accès Pro" — fond violet/indigo trop clair en dark */
+html.dark .bg-gradient-to-r.from-violet-50,
+html.dark .from-violet-50.to-indigo-50 {
+  background: rgba(109, 40, 217, 0.15) !important;
+}
+
+html.dark .text-violet-700 {
+  color: #c4b5fd !important;
+  /* violet-300, lisible sur fond sombre */
+}
+
+html.dark .text-violet-500 {
+  color: #a78bfa !important;
+}
+
+html.dark .border-violet-100 {
+  border-color: rgba(139, 92, 246, 0.25) !important;
+}
+
+/* Tics de langage — badges jaune/ambre sur fond sombre */
+html.dark .bg-yellow-100 {
+  background-color: rgba(161, 98, 7, 0.25) !important;
+  /* amber sombre */
+}
+
+html.dark .text-yellow-700,
+html.dark .text-yellow-800 {
+  color: #fde68a !important;
+  /* jaune clair lisible */
+}
+
+html.dark .bg-amber-100 {
+  background-color: rgba(161, 98, 7, 0.25) !important;
+}
+
+html.dark .text-amber-700,
+html.dark .text-amber-800 {
+  color: #fcd34d !important;
+}
+
+/* Badges verts (ex: "Très bien") */
+html.dark .bg-green-100 {
+  background-color: rgba(22, 101, 52, 0.3) !important;
+}
+
+html.dark .text-green-700,
+html.dark .text-green-800 {
+  color: #86efac !important;
+  /* green-300 */
+}
+
+/* Badges bleus */
+html.dark .bg-blue-100 {
+  background-color: rgba(30, 64, 175, 0.3) !important;
+}
+
+html.dark .text-blue-700,
+html.dark .text-blue-800 {
+  color: #93c5fd !important;
+  /* blue-300 */
+}
+
+/* Badges rouges/orange */
+html.dark .bg-red-100 {
+  background-color: rgba(153, 27, 27, 0.3) !important;
+}
+
+html.dark .text-red-700,
+html.dark .text-red-800 {
+  color: #fca5a5 !important;
+}
+
+html.dark .bg-orange-100 {
+  background-color: rgba(154, 52, 18, 0.3) !important;
+}
+
+html.dark .text-orange-700,
+html.dark .text-orange-800 {
+  color: #fdba74 !important;
+}
+
+/* Navigation pill active en dark — fond blanc trop flashy */
+html.dark nav .bg-white {
+  background-color: #334155 !important;
+  /* slate-700, subtil */
+}
+
+html.dark nav .text-slate-900 {
+  color: #f1f5f9 !important;
+}
+
+/* Progress bars — fond de piste */
+html.dark .bg-slate-200 {
+  background-color: #334155 !important;
+}
+
+/* Recharts — labels du radar et des axes */
+html.dark .recharts-text,
+html.dark .recharts-label,
+html.dark text {
+  fill: #94a3b8 !important;
+  /* slate-400, lisible sur fond sombre */
+}
+
+html.dark .recharts-cartesian-axis-tick-value {
+  fill: #94a3b8 !important;
+}
+
+/* Dropdown avatar — fond blanc → sombre */
+html.dark [class*="rounded-2xl"].bg-white {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+/* ── Hover states en dark mode ───────────────────────────────────────────── */
+/* Les variantes hover: de Tailwind gardent leurs couleurs claires en dark.   */
+/* On les intercèpte ici pour éviter le fond clair sur fond sombre.          */
+
+html.dark .hover\:bg-slate-50:hover,
+html.dark .hover\:bg-slate-100:hover,
+html.dark .hover\:bg-white:hover {
+  background-color: rgba(51, 65, 85, 0.5) !important;
+  /* slate-700/50 subtil */
+}
+
+/* Classe avec opacité : hover:bg-slate-50/60 */
+html.dark [class*="hover:bg-slate-"]:hover {
+  background-color: rgba(51, 65, 85, 0.4) !important;
+}
+
+/* Dropdown : hover rouge sur fond sombre reste lisible */
+html.dark .hover\:bg-red-50:hover {
+  background-color: rgba(153, 27, 27, 0.2) !important;
+}
+
+/* Assure que les textes restent visibles sur les fonds hover sombres */
+html.dark .hover\:text-slate-700:hover,
+html.dark .hover\:text-slate-600:hover {
+  color: var(--text-primary) !important;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(150%);
+  }
+}

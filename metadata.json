@@ -1,0 +1,7 @@
+{
+  "name": "JuryMaster",
+  "description": "MVP SaaS d'entraînement à l'oral pour étudiants avec feedback IA.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
