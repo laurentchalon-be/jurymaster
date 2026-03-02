@@ -319,10 +319,20 @@ export default function App() {
       });
 
       if (fnError) {
-        if (fnError.message?.includes('RATE_LIMIT_REACHED')) {
+        if (fnError.message?.includes('RATE_LIMIT_REACHED') || (fnError as any).context?.status === 429) {
           setShowLimitModal(true);
           return;
         }
+
+        if ((fnError as any).context && typeof (fnError as any).context.json === 'function') {
+          try {
+            const errorBody = await (fnError as any).context.clone().json();
+            if (errorBody?.error) throw new Error(errorBody.error);
+          } catch (e) {
+            // ignore
+          }
+        }
+
         throw fnError;
       }
       if ((data as any)?.error === 'RATE_LIMIT_REACHED') {
@@ -563,10 +573,21 @@ export default function App() {
       });
 
       if (fnError) {
-        if (fnError.message?.includes('RATE_LIMIT_REACHED')) {
+        if (fnError.message?.includes('RATE_LIMIT_REACHED') || (fnError as any).context?.status === 429) {
           setShowLimitModal(true);
           return;
         }
+
+        // Try to parse JSON from the non-2xx response to get the exact message
+        if ((fnError as any).context && typeof (fnError as any).context.json === 'function') {
+          try {
+            const errorBody = await (fnError as any).context.clone().json();
+            if (errorBody?.error) throw new Error(errorBody.error);
+          } catch (e) {
+            // Ignore parse errors, fallback to throwing original fnError
+          }
+        }
+
         throw fnError;
       }
       if ((data as any)?.error === 'RATE_LIMIT_REACHED') {
