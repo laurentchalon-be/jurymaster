@@ -1,11 +1,13 @@
-import React, { useEffect, useRef } from 'react';
-import { X, Mic, BrainCircuit, TrendingUp, GraduationCap } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { X, Mic, BrainCircuit, TrendingUp, GraduationCap, Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 
 interface AuthModalProps {
     isOpen: boolean;
     reason: 'launch' | 'stats' | null;
     onClose: () => void;
     onSignIn: () => void;
+    onSignInWithEmail?: (email: string, password: string) => Promise<string | null>;
+    onSignUpWithEmail?: (email: string, password: string) => Promise<string | null>;
 }
 
 const GoogleIcon = () => (
@@ -16,24 +18,6 @@ const GoogleIcon = () => (
         <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
     </svg>
 );
-
-const features = [
-    {
-        icon: BrainCircuit,
-        title: 'Feedback IA complet',
-        description: 'Analyse instantanée par Gemini après chaque oral.',
-    },
-    {
-        icon: TrendingUp,
-        title: 'Suivi de progression',
-        description: 'Historique de toutes vos sessions et évolution de vos scores.',
-    },
-    {
-        icon: GraduationCap,
-        title: 'Sauvegarde automatique',
-        description: 'Chaque oral enregistré, accessible partout et à tout moment.',
-    },
-];
 
 const reasons = {
     launch: {
@@ -48,8 +32,18 @@ const reasons = {
     },
 };
 
-export default function AuthModal({ isOpen, reason, onClose, onSignIn }: AuthModalProps) {
+type EmailMode = 'login' | 'signup';
+
+export default function AuthModal({ isOpen, reason, onClose, onSignIn, onSignInWithEmail, onSignUpWithEmail }: AuthModalProps) {
     const modalRef = useRef<HTMLDivElement>(null);
+    const [emailMode, setEmailMode] = useState<EmailMode>('login');
+    const [showEmailForm, setShowEmailForm] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
+    const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -65,9 +59,63 @@ export default function AuthModal({ isOpen, reason, onClose, onSignIn }: AuthMod
         };
     }, [isOpen, onClose]);
 
-    // Click outside to close
+    // Reset form when modal opens/closes
+    useEffect(() => {
+        if (!isOpen) {
+            setTimeout(() => {
+                setShowEmailForm(false);
+                setEmail('');
+                setPassword('');
+                setErrorMsg(null);
+                setSuccessMsg(null);
+                setEmailMode('login');
+            }, 300);
+        }
+    }, [isOpen]);
+
     const handleBackdropClick = (e: React.MouseEvent) => {
         if (e.target === e.currentTarget) onClose();
+    };
+
+    const handleEmailSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!email || !password) return;
+        setIsSubmitting(true);
+        setErrorMsg(null);
+        setSuccessMsg(null);
+
+        try {
+            if (emailMode === 'login') {
+                const err = await onSignInWithEmail?.(email, password);
+                if (err) {
+                    // Translate common Supabase errors to French
+                    if (err.includes('Invalid login credentials')) {
+                        setErrorMsg('Email ou mot de passe incorrect.');
+                    } else if (err.includes('Email not confirmed')) {
+                        setErrorMsg('Veuillez confirmer votre email avant de vous connecter.');
+                    } else {
+                        setErrorMsg(err);
+                    }
+                } else {
+                    onClose();
+                }
+            } else {
+                const err = await onSignUpWithEmail?.(email, password);
+                if (err) {
+                    if (err.includes('already registered') || err.includes('already been registered')) {
+                        setErrorMsg('Cet email est déjà utilisé. Essayez de vous connecter.');
+                    } else if (err.includes('Password should be at least')) {
+                        setErrorMsg('Le mot de passe doit contenir au moins 6 caractères.');
+                    } else {
+                        setErrorMsg(err);
+                    }
+                } else {
+                    setSuccessMsg('✅ Compte créé ! Vérifiez votre email pour confirmer votre inscription.');
+                }
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     if (!isOpen || !reason) return null;
@@ -82,7 +130,7 @@ export default function AuthModal({ isOpen, reason, onClose, onSignIn }: AuthMod
         >
             <div
                 ref={modalRef}
-                className="relative w-full max-w-md rounded-3xl overflow-hidden shadow-2xl animate-modal-in"
+                className="relative w-full max-w-md rounded-3xl overflow-hidden shadow-2xl"
                 style={{
                     background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%)',
                     border: '1px solid rgba(255,255,255,0.08)',
@@ -104,10 +152,10 @@ export default function AuthModal({ isOpen, reason, onClose, onSignIn }: AuthMod
                     <X className="w-5 h-5" />
                 </button>
 
-                <div className="relative z-10 flex flex-col items-center gap-7 p-8 pt-10">
+                <div className="relative z-10 flex flex-col items-center gap-5 p-8 pt-10">
 
                     {/* Header */}
-                    <div className="text-center space-y-3">
+                    <div className="text-center space-y-2">
                         <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 shadow-xl shadow-blue-600/30 mb-1">
                             <Mic className="w-7 h-7 text-white" />
                         </div>
@@ -118,41 +166,140 @@ export default function AuthModal({ isOpen, reason, onClose, onSignIn }: AuthMod
                         </div>
                     </div>
 
-                    {/* Features */}
-                    <div className="w-full space-y-2.5">
-                        {features.map(({ icon: Icon, title: ftitle, description }) => (
-                            <div
-                                key={ftitle}
-                                className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3 backdrop-blur-sm"
+                    {!showEmailForm ? (
+                        /* ── Écran principal : 2 boutons ── */
+                        <div className="w-full space-y-3">
+                            {/* Google */}
+                            <button
+                                id="modal-google-signin-btn"
+                                onClick={onSignIn}
+                                className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-50 text-slate-900 font-semibold px-6 py-3.5 rounded-2xl shadow-lg shadow-black/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                             >
-                                <div className="flex-shrink-0 mt-0.5 w-8 h-8 bg-blue-600/20 rounded-lg flex items-center justify-center">
-                                    <Icon className="w-4 h-4 text-blue-400" />
-                                </div>
-                                <div>
-                                    <h3 className="text-white font-semibold text-sm">{ftitle}</h3>
-                                    <p className="text-slate-400 text-xs mt-0.5 leading-relaxed">{description}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                                <GoogleIcon />
+                                Continuer avec Google
+                            </button>
 
-                    {/* CTA */}
-                    <div className="w-full space-y-3">
-                        <button
-                            id="modal-google-signin-btn"
-                            onClick={onSignIn}
-                            className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-50 text-slate-900 font-semibold px-6 py-3.5 rounded-2xl shadow-lg shadow-black/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-                        >
-                            <GoogleIcon />
-                            Continuer avec Google — c'est gratuit
-                        </button>
-                        <button
-                            onClick={onClose}
-                            className="w-full text-center text-sm text-slate-500 hover:text-slate-300 transition-colors py-1"
-                        >
-                            Continuer en mode démo (sans sauvegarde)
-                        </button>
-                    </div>
+                            {/* Séparateur */}
+                            <div className="flex items-center gap-3">
+                                <div className="flex-1 h-px bg-white/10" />
+                                <span className="text-slate-500 text-xs">ou</span>
+                                <div className="flex-1 h-px bg-white/10" />
+                            </div>
+
+                            {/* Email */}
+                            <button
+                                id="modal-email-signin-btn"
+                                onClick={() => setShowEmailForm(true)}
+                                className="w-full flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold px-6 py-3.5 rounded-2xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                            >
+                                <Mail className="w-5 h-5 text-blue-400" />
+                                Continuer avec un email
+                            </button>
+
+                            <button
+                                onClick={onClose}
+                                className="w-full text-center text-sm text-slate-500 hover:text-slate-300 transition-colors py-1"
+                            >
+                                Continuer en mode démo (sans sauvegarde)
+                            </button>
+                        </div>
+                    ) : (
+                        /* ── Formulaire email ── */
+                        <div className="w-full space-y-4">
+                            {/* Tabs */}
+                            <div className="flex bg-white/5 rounded-xl p-1 border border-white/10">
+                                <button
+                                    onClick={() => { setEmailMode('login'); setErrorMsg(null); setSuccessMsg(null); }}
+                                    className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${emailMode === 'login'
+                                            ? 'bg-blue-600 text-white shadow-lg'
+                                            : 'text-slate-400 hover:text-white'
+                                        }`}
+                                >
+                                    Se connecter
+                                </button>
+                                <button
+                                    onClick={() => { setEmailMode('signup'); setErrorMsg(null); setSuccessMsg(null); }}
+                                    className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${emailMode === 'signup'
+                                            ? 'bg-blue-600 text-white shadow-lg'
+                                            : 'text-slate-400 hover:text-white'
+                                        }`}
+                                >
+                                    Créer un compte
+                                </button>
+                            </div>
+
+                            <form onSubmit={handleEmailSubmit} className="space-y-3">
+                                {/* Email field */}
+                                <div className="relative">
+                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                                    <input
+                                        id="auth-email-input"
+                                        type="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        placeholder="votre@email.com"
+                                        required
+                                        className="w-full bg-white/5 border border-white/10 text-white placeholder-slate-500 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                                    />
+                                </div>
+
+                                {/* Password field */}
+                                <div className="relative">
+                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                                    <input
+                                        id="auth-password-input"
+                                        type={showPassword ? 'text' : 'password'}
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder={emailMode === 'signup' ? 'Mot de passe (6 caractères min.)' : 'Mot de passe'}
+                                        required
+                                        minLength={emailMode === 'signup' ? 6 : undefined}
+                                        className="w-full bg-white/5 border border-white/10 text-white placeholder-slate-500 rounded-xl pl-10 pr-11 py-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+                                        tabIndex={-1}
+                                    >
+                                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    </button>
+                                </div>
+
+                                {/* Error / Success */}
+                                {errorMsg && (
+                                    <p className="text-red-400 text-xs bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                                        {errorMsg}
+                                    </p>
+                                )}
+                                {successMsg && (
+                                    <p className="text-emerald-400 text-xs bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2">
+                                        {successMsg}
+                                    </p>
+                                )}
+
+                                {/* Submit */}
+                                <button
+                                    id="auth-email-submit-btn"
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold px-6 py-3.5 rounded-2xl shadow-lg shadow-blue-600/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                                >
+                                    {isSubmitting ? (
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                    ) : emailMode === 'login' ? 'Se connecter' : 'Créer mon compte'}
+                                </button>
+                            </form>
+
+                            {/* Retour */}
+                            <button
+                                onClick={() => { setShowEmailForm(false); setErrorMsg(null); setSuccessMsg(null); }}
+                                className="w-full text-center text-xs text-slate-500 hover:text-slate-300 transition-colors py-1"
+                            >
+                                ← Retour
+                            </button>
+                        </div>
+                    )}
 
                 </div>
             </div>

@@ -9,6 +9,8 @@ interface UseAuthReturn {
     profile: Profile | null;
     isLoading: boolean;
     signInWithGoogle: () => Promise<void>;
+    signInWithEmail: (email: string, password: string) => Promise<string | null>;
+    signUpWithEmail: (email: string, password: string) => Promise<string | null>;
     signOut: () => Promise<void>;
 }
 
@@ -69,9 +71,25 @@ export function useAuth(): UseAuthReturn {
         });
     };
 
+    const signInWithEmail = async (email: string, password: string): Promise<string | null> => {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) return error.message;
+        return null;
+    };
+
+    const signUpWithEmail = async (email: string, password: string): Promise<string | null> => {
+        const { error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: { emailRedirectTo: window.location.origin },
+        });
+        if (error) return error.message;
+        return null;
+    };
+
     const signOut = async () => {
         await supabase.auth.signOut();
     };
 
-    return { user, session, profile, isLoading, signInWithGoogle, signOut };
+    return { user, session, profile, isLoading, signInWithGoogle, signInWithEmail, signUpWithEmail, signOut };
 }

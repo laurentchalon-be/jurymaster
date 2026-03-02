@@ -46,7 +46,7 @@ interface FeedbackReport {
 }
 
 export default function App() {
-  const { user, profile, isLoading, signInWithGoogle, signOut } = useAuth();
+  const { user, profile, isLoading, signInWithGoogle, signInWithEmail, signUpWithEmail, signOut } = useAuth();
 
   const [juryType, setJuryType] = useState<JuryType>('Bienveillant');
   const [subject, setSubject] = useState('');
@@ -745,6 +745,8 @@ export default function App() {
           reason={modalReason}
           onClose={() => setModalOpen(false)}
           onSignIn={signInWithGoogle}
+          onSignInWithEmail={signInWithEmail}
+          onSignUpWithEmail={signUpWithEmail}
         />
       </div>
     );
@@ -772,6 +774,8 @@ export default function App() {
         reason={modalReason}
         onClose={() => setModalOpen(false)}
         onSignIn={signInWithGoogle}
+        onSignInWithEmail={signInWithEmail}
+        onSignUpWithEmail={signUpWithEmail}
       />
 
       {/* Modale de limite atteinte */}
