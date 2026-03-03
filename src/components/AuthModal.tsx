@@ -146,7 +146,7 @@ export default function AuthModal({ isOpen, reason, onClose, onSignIn, onSignInW
                 {/* Bouton fermer */}
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 z-10 p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                    className="absolute top-4 right-4 z-20 p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
                     title="Fermer"
                 >
                     <X className="w-5 h-5" />
@@ -211,8 +211,8 @@ export default function AuthModal({ isOpen, reason, onClose, onSignIn, onSignInW
                                 <button
                                     onClick={() => { setEmailMode('login'); setErrorMsg(null); setSuccessMsg(null); }}
                                     className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${emailMode === 'login'
-                                            ? 'bg-blue-600 text-white shadow-lg'
-                                            : 'text-slate-400 hover:text-white'
+                                        ? 'bg-blue-600 text-white shadow-lg'
+                                        : 'text-slate-400 hover:text-white'
                                         }`}
                                 >
                                     Se connecter
@@ -220,8 +220,8 @@ export default function AuthModal({ isOpen, reason, onClose, onSignIn, onSignInW
                                 <button
                                     onClick={() => { setEmailMode('signup'); setErrorMsg(null); setSuccessMsg(null); }}
                                     className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${emailMode === 'signup'
-                                            ? 'bg-blue-600 text-white shadow-lg'
-                                            : 'text-slate-400 hover:text-white'
+                                        ? 'bg-blue-600 text-white shadow-lg'
+                                        : 'text-slate-400 hover:text-white'
                                         }`}
                                 >
                                     Créer un compte
