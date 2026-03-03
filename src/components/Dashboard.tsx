@@ -628,7 +628,7 @@ export default function Dashboard({ isPro, refreshTrigger }: DashboardProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const limit = isPro ? 5 : 1;
+  const limit = isPro ? 10 : 1;
 
   const fetchSessions = useCallback(async () => {
     setLoading(true);
