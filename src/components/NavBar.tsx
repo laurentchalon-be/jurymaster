@@ -11,6 +11,7 @@ interface NavBarProps {
     user: User | null;
     profile: Profile | null;
     onSignIn: () => void;
+    onOpenModal: () => void;
     onSignOut: () => void;
     // Navigation
     activeView: ActiveView;
@@ -389,7 +390,7 @@ function QuotaBar({ isPro, quotaSecondsUsed, quotaSecondsMax }: {
 // ── Composant principal NavBar ─────────────────────────────────────────────────
 
 export default function NavBar({
-    user, profile, onSignIn, onSignOut,
+    user, profile, onSignIn, onOpenModal, onSignOut,
     activeView, onNavigate,
     quotaSecondsUsed = 0,
     quotaSecondsMax = QUOTA_MAX,
@@ -482,7 +483,7 @@ export default function NavBar({
                             <div className="flex items-center gap-2">
                                 <button
                                     id="login-btn"
-                                    onClick={onSignIn}
+                                    onClick={onOpenModal}
                                     className="hidden sm:flex items-center gap-1.5 text-slate-500 hover:text-slate-800 px-3 py-2 rounded-xl text-sm font-medium transition-colors hover:bg-slate-100"
                                 >
                                     <LogIn className="w-3.5 h-3.5" />
@@ -490,7 +491,7 @@ export default function NavBar({
                                 </button>
                                 <button
                                     id="signup-btn"
-                                    onClick={onSignIn}
+                                    onClick={onOpenModal}
                                     className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm shadow-blue-500/30"
                                 >
                                     Créer un compte

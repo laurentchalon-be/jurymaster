@@ -840,6 +840,7 @@ export default function App() {
         user={user}
         profile={profile}
         onSignIn={signInWithGoogleAndSave}
+        onOpenModal={() => { setModalReason('launch'); setModalOpen(true); }}
         onSignOut={signOut}
         activeView={activeView}
         onNavigate={(view) => {
