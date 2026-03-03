@@ -478,15 +478,24 @@ export default function NavBar({
                                 />
                             </>
                         ) : (
-                            /* Non connecté → CTA connexion */
-                            <button
-                                id="signin-btn"
-                                onClick={onSignIn}
-                                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm shadow-blue-500/30"
-                            >
-                                <LogIn className="w-4 h-4" />
-                                Commencer gratuitement
-                            </button>
+                            /* Non connecté → double CTA */
+                            <div className="flex items-center gap-2">
+                                <button
+                                    id="login-btn"
+                                    onClick={onSignIn}
+                                    className="hidden sm:flex items-center gap-1.5 text-slate-500 hover:text-slate-800 px-3 py-2 rounded-xl text-sm font-medium transition-colors hover:bg-slate-100"
+                                >
+                                    <LogIn className="w-3.5 h-3.5" />
+                                    Se connecter
+                                </button>
+                                <button
+                                    id="signup-btn"
+                                    onClick={onSignIn}
+                                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm shadow-blue-500/30"
+                                >
+                                    Créer un compte
+                                </button>
+                            </div>
                         )}
                     </div>
                 </div>
