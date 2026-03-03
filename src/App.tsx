@@ -870,26 +870,6 @@ export default function App() {
         {/* ═══════════════════════════════════════════════════════════ */}
         {activeView === 'oral' && (
           <>
-            {/* Bannière guest mode */}
-            {!user && (
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl px-6 py-4 flex items-center justify-between gap-4 flex-wrap">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">👋</span>
-                  <div>
-                    <p className="font-semibold text-slate-800 text-sm">Bienvenue en mode démo !</p>
-                    <p className="text-slate-500 text-xs mt-0.5">
-                      Testez l'interface avec <strong>2 minutes d'oral gratuit</strong>. Connectez-vous pour des sessions complètes.
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => { setModalReason('launch'); setModalOpen(true); }}
-                  className="flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm"
-                >
-                  Créer un compte gratuit →
-                </button>
-              </div>
-            )}
 
             {/* Espace Entraînement */}
             <section className="bg-white rounded-3xl p-8 shadow-sm border border-slate-200">

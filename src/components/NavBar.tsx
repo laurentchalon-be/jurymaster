@@ -485,7 +485,7 @@ export default function NavBar({
                                 className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm shadow-blue-500/30"
                             >
                                 <LogIn className="w-4 h-4" />
-                                Se connecter
+                                Commencer gratuitement
                             </button>
                         )}
                     </div>
