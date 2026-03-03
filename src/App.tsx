@@ -1041,11 +1041,14 @@ export default function App() {
               </div>
             </section>
 
-            {/* Loading State */}
+            {/* Loading State — overlayFixe toujours visible */}
             {isAnalyzing && (
-              <div className="flex flex-col items-center justify-center py-12 space-y-4">
-                <div className="w-12 h-12 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin" />
-                <p className="text-slate-500 font-medium animate-pulse">Le jury délibère...</p>
+              <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950/70 backdrop-blur-sm">
+                <div className="flex flex-col items-center gap-5 bg-white/10 border border-white/20 rounded-3xl px-12 py-10 shadow-2xl">
+                  <div className="w-14 h-14 border-4 border-blue-300/40 border-t-blue-500 rounded-full animate-spin" />
+                  <p className="text-white text-lg font-semibold tracking-wide animate-pulse">⚖️ Le jury délibère...</p>
+                  <p className="text-slate-300 text-sm">Analyse de votre oral en cours</p>
+                </div>
               </div>
             )}
 
