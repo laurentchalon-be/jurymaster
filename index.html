@@ -4,13 +4,92 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SEO — À mettre à jour quand le domaine auditio.app sera actif
+       Remplacer "https://auditioapp.netlify.app" par "https://auditio.app"
+  ═══════════════════════════════════════════════════════════════ -->
+
+  <!-- Titre & Description -->
+  <title>Auditio — Jury IA pour s'entraîner à l'oral | Préparez vos concours</title>
   <meta name="description"
-    content="Auditio — Entraînez-vous à l'oral avec un jury IA. Analysez vos performances, progressez et réussissez vos concours." />
+    content="Simulez un jury d'oral avec l'IA Gemini. Obtenez un feedback instantané sur votre clarté, votre structure et votre conviction. Idéal pour les concours, entretiens et oraux d'examens." />
+  <meta name="author" content="Auditio" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://auditioapp.netlify.app" />
+
+  <!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:site_name" content="Auditio" />
+  <meta property="og:url" content="https://auditioapp.netlify.app" />
+  <meta property="og:title" content="Auditio — Jury IA pour s'entraîner à l'oral" />
+  <meta property="og:description"
+    content="Simulez un jury d'oral avec l'IA Gemini. Feedback instantané, score et conseils personnalisés. Idéal pour les concours et entretiens." />
+  <meta property="og:image" content="https://auditioapp.netlify.app/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Auditio — Jury IA pour l'entraînement oral" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Auditio — Jury IA pour s'entraîner à l'oral" />
+  <meta name="twitter:description"
+    content="Simulez un jury d'oral avec l'IA Gemini. Feedback instantané, score et conseils personnalisés." />
+  <meta name="twitter:image" content="https://auditioapp.netlify.app/og-image.png" />
+
+  <!-- Favicons & PWA -->
   <link rel="icon" type="image/png" href="/logo.png" />
-  <title>Auditio</title>
+  <link rel="apple-touch-icon" href="/logo.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#2563eb" />
+
+  <!-- Données structurées JSON-LD (SoftwareApplication) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Auditio",
+    "applicationCategory": "EducationApplication",
+    "operatingSystem": "Web",
+    "inLanguage": "fr",
+    "description": "Simulez un jury d'oral avec l'IA Gemini. Obtenez un feedback instantané sur votre clarté, votre structure et votre conviction. Idéal pour les concours, entretiens et oraux d'examens.",
+    "url": "https://auditioapp.netlify.app",
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "Gratuit",
+        "price": "0",
+        "priceCurrency": "EUR"
+      },
+      {
+        "@type": "Offer",
+        "name": "Pass Rush",
+        "price": "3.99",
+        "priceCurrency": "EUR"
+      },
+      {
+        "@type": "Offer",
+        "name": "Abonnement Pro",
+        "price": "9.99",
+        "priceCurrency": "EUR"
+      }
+    ]
+  }
+  </script>
 </head>
 
 <body>
+  <!-- Contenu statique pour les crawlers sans JavaScript -->
+  <noscript>
+    <h1>Auditio — Jury IA pour s'entraîner à l'oral</h1>
+    <p>Simulez un jury d'oral avec l'IA Gemini. Obtenez un feedback instantané sur votre clarté, votre structure et
+      votre conviction. Idéal pour préparer vos concours, entretiens et oraux d'examens.</p>
+    <p>Pour utiliser Auditio, veuillez activer JavaScript dans votre navigateur.</p>
+  </noscript>
+
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>

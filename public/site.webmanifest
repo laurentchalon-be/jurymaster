@@ -1,0 +1,18 @@
+{
+    "name": "Auditio",
+    "short_name": "Auditio",
+    "description": "Jury IA pour s'entraîner à l'oral et préparer vos concours",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0f172a",
+    "theme_color": "#2563eb",
+    "lang": "fr",
+    "icons": [
+        {
+            "src": "/logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
