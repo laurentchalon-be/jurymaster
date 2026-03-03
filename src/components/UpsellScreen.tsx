@@ -33,7 +33,7 @@ export default function UpsellScreen({ onSignIn, onContinueDemo, blurredScore }:
                     <div className="bg-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-600/40">
                         <Mic className="w-6 h-6 text-white" />
                     </div>
-                    <span className="text-2xl font-bold text-white tracking-tight">JuryMaster</span>
+                    <span className="text-2xl font-bold text-white tracking-tight">Auditio</span>
                 </div>
 
                 {/* Score flouté (teaser) */}

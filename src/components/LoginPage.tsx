@@ -102,7 +102,7 @@ export default function LoginPage({ onSignInWithGoogle, onSignInWithEmail, onSig
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-600 shadow-xl shadow-blue-600/30 mb-2">
                         <Mic className="w-8 h-8 text-white" />
                     </div>
-                    <h1 className="text-4xl font-bold text-white tracking-tight">JuryMaster</h1>
+                    <h1 className="text-4xl font-bold text-white tracking-tight">Auditio</h1>
                     <p className="text-slate-400 text-lg leading-relaxed">
                         Entraînez-vous à l'oral, obtenez un feedback IA<br />et progressez avant votre grand jour.
                     </p>

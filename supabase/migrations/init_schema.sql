@@ -1,5 +1,5 @@
 -- ============================================================
--- JuryMaster — Schéma complet de la base de données
+-- Auditio — Schéma complet de la base de données
 -- État au 2026-02-28 | Appliqué via MCP Supabase
 -- ============================================================
 

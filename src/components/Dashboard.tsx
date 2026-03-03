@@ -178,7 +178,7 @@ function RadarTooltip({ active, payload }: any) {
         </p>
         {d.B !== undefined && (
           <p style={{ color: "#64748b", fontWeight: 500 }}>
-            Moyenne JuryMaster : {d.B}/100
+            Moyenne Auditio : {d.B}/100
           </p>
         )}
         {d.explanation && (
@@ -368,7 +368,7 @@ function SessionCard({
                       />
                       {isPro && averageRadar && (
                         <Radar
-                          name="Moyenne JuryMaster"
+                          name="Moyenne Auditio"
                           dataKey="B"
                           stroke="#94a3b8"
                           fill="#94a3b8"

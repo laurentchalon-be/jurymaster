@@ -26,7 +26,7 @@ const CONNECTED_MAX_SECONDS = 5 * 60;  // 5 minutes (compte gratuit)
 const PRO_MAX_SECONDS = 15 * 60;        // 15 minutes (abonné Pro)
 
 // Clé sessionStorage pour persister la transcription avant redirect OAuth
-const PENDING_KEY = 'jurymaster_pending_analysis';
+const PENDING_KEY = 'auditio_pending_analysis';
 
 interface RadarDataPoint {
   subject: string;
@@ -74,11 +74,11 @@ export default function App() {
   const deviceIdRef = useRef<string>('');
 
   useEffect(() => {
-    let id = localStorage.getItem('jurymaster_device_id');
+    let id = localStorage.getItem('auditio_device_id');
     if (!id) {
       // Génère une ID aléatoire stockée uniquement en local
       id = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
-      localStorage.setItem('jurymaster_device_id', id);
+      localStorage.setItem('auditio_device_id', id);
     }
     setDeviceId(id);
     deviceIdRef.current = id;
@@ -146,7 +146,7 @@ export default function App() {
   const [showLimitModal, setShowLimitModal] = useState(false);
 
   const fetchUsageCount = useCallback(async () => {
-    let devId = localStorage.getItem('jurymaster_device_id');
+    let devId = localStorage.getItem('auditio_device_id');
     if (!devId) return;
     try {
       const { data, error } = await (supabase.rpc as any)('get_daily_usage', { p_device_id: devId });
@@ -169,10 +169,10 @@ export default function App() {
   const fetchQuota = useCallback(async () => {
     if (!user || profile?.is_pro) return; // Pro : pas de quota
     try {
-      let deviceId = localStorage.getItem('jurymaster_device_id');
+      let deviceId = localStorage.getItem('auditio_device_id');
       if (!deviceId) {
         deviceId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
-        localStorage.setItem('jurymaster_device_id', deviceId);
+        localStorage.setItem('auditio_device_id', deviceId);
       }
 
       const { data, error } = await supabase.functions.invoke('session-quota', {
@@ -725,7 +725,7 @@ export default function App() {
           {/* Titre */}
           <div className="space-y-2">
             <h1 className="text-3xl font-bold text-white tracking-tight">
-              Jury<span className="text-indigo-400">Master</span>
+              Auditio
             </h1>
             <p className="text-slate-400 text-sm font-medium uppercase tracking-widest">
               Maintenance en cours
@@ -735,7 +735,7 @@ export default function App() {
           {/* Message */}
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-left space-y-3">
             <p className="text-slate-200 font-semibold text-sm">
-              🚧 Nous améliorons JuryMaster pour vous !
+              🚧 Nous améliorons Auditio pour vous !
             </p>
             <p className="text-slate-400 text-sm leading-relaxed">
               Une mise à jour importante est en cours de déploiement. Le service sera de nouveau disponible très prochainement.

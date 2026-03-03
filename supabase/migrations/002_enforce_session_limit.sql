@@ -1,5 +1,5 @@
 -- ============================================================
--- JuryMaster - Migration : Limitation à 5 sessions par utilisateur
+-- Auditio - Migration : Limitation à 5 sessions par utilisateur
 -- ============================================================
 
 -- Fonction pour limiter le nombre de sessions à 5 par utilisateur

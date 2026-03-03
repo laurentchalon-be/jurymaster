@@ -1,5 +1,5 @@
 // ============================================================
-// JuryMaster - Types TypeScript pour le schéma Supabase
+// Auditio - Types TypeScript pour le schéma Supabase
 // Généré manuellement - peut être régénéré via : supabase gen types typescript
 // ============================================================
 

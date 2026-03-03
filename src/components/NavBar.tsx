@@ -78,7 +78,7 @@ function PaywallModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
                         </div>
                         <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-3">Choisissez votre accès</h2>
                         <p className="text-slate-400 text-base max-w-lg mx-auto">
-                            Débloquez tout le potentiel de JuryMaster pour réussir votre oral.
+                            Débloquez tout le potentiel d'Auditio pour réussir votre oral.
                         </p>
                     </div>
 
@@ -212,7 +212,7 @@ function AvatarMenu({ user, profile, isPro, onSignOut }: {
 
     // ─ Dark mode ─
     const [isDark, setIsDark] = useState(() =>
-        localStorage.getItem('jurymaster_theme') === 'dark'
+        localStorage.getItem('auditio_theme') === 'dark'
     );
 
     useEffect(() => {
@@ -221,7 +221,7 @@ function AvatarMenu({ user, profile, isPro, onSignOut }: {
         } else {
             document.documentElement.classList.remove('dark');
         }
-        localStorage.setItem('jurymaster_theme', isDark ? 'dark' : 'light');
+        localStorage.setItem('auditio_theme', isDark ? 'dark' : 'light');
     }, [isDark]);
 
     // Fermer au clic extérieur
@@ -416,7 +416,7 @@ export default function NavBar({
                             <Mic className="w-4 h-4 text-white" />
                         </div>
                         <span className="text-lg font-bold tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">
-                            JuryMaster
+                            Auditio
                         </span>
                         {!user && (
                             <span className="text-[10px] font-semibold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full border border-amber-200">
