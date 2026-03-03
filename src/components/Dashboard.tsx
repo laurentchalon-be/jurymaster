@@ -857,7 +857,7 @@ export default function Dashboard({ isPro, refreshTrigger }: DashboardProps) {
           <button className="relative z-10 w-full md:w-auto bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 hover:from-amber-500 hover:to-orange-600 text-white text-sm font-bold px-6 py-3 rounded-xl shadow-lg shadow-orange-500/20 transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] whitespace-nowrap overflow-hidden group/btn flex-shrink-0 cursor-not-allowed">
             <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)] -translate-x-[150%] animate-[shimmer_2s_infinite]" />
             <span className="relative z-10 drop-shadow-sm flex items-center gap-2 justify-center">
-              Devenir Mentor
+              Devenir Pro
             </span>
             <span className="block text-[10px] text-amber-100/70 font-medium text-center relative z-10 mt-0.5">Bientôt disponible</span>
           </button>

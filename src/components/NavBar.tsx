@@ -126,13 +126,13 @@ function PaywallModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
                             </button>
                         </div>
 
-                        {/* Abonnement Mentor */}
+                        {/* Abonnement Pro */}
                         <div className="bg-gradient-to-b from-violet-600/20 to-indigo-600/20 border border-violet-500/30 rounded-2xl p-7 flex flex-col relative overflow-hidden shadow-2xl shadow-violet-900/20">
                             <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-violet-500 to-indigo-500"></div>
                             <div className="absolute top-5 right-5 bg-violet-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-md shadow-violet-500/20">
                                 Recommandé
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-2">Abonnement Mentor</h3>
+                            <h3 className="text-2xl font-bold text-white mb-2">Abonnement Pro</h3>
                             <p className="text-slate-400 text-sm mb-6 h-10">Accès complet sur la durée.</p>
                             <div className="flex items-end gap-1 mb-8">
                                 <span className="text-5xl font-bold text-white">9,99€</span>
@@ -171,7 +171,7 @@ function PaywallModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
                                 <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent)] -translate-x-[150%] animate-[shimmer_2s_infinite]" />
                                 <div className="relative z-10 flex items-center justify-center gap-2">
                                     <Crown className="w-4 h-4 text-amber-300" />
-                                    Devenir Mentor
+                                    Devenir Pro
                                 </div>
                             </button>
                         </div>
@@ -258,7 +258,7 @@ function AvatarMenu({ user, profile, isPro, onSignOut }: {
                         {profile?.full_name?.split(' ')[0] ?? user.email?.split('@')[0]}
                     </span>
                     {isPro
-                        ? <span className="text-[10px] font-bold text-amber-600">⭐ Mentor</span>
+                        ? <span className="text-[10px] font-bold text-amber-600">⭐ Pro</span>
                         : <span className="text-[10px] text-slate-400">Gratuit</span>
                     }
                 </div>
@@ -353,7 +353,7 @@ function QuotaBar({ isPro, quotaSecondsUsed, quotaSecondsMax }: {
             <div className="bg-gradient-to-r from-violet-50 to-indigo-50 border-b border-violet-100 px-4 py-1.5 flex items-center justify-center gap-2">
                 <Crown className="w-3.5 h-3.5 text-violet-500" />
                 <span className="text-xs font-bold text-violet-800 tracking-wide uppercase">
-                    Membre Mentor · Sessions illimitées
+                    Membre Pro · Sessions illimitées
                 </span>
                 <Check className="w-3.5 h-3.5 text-violet-500" />
             </div>
@@ -406,17 +406,15 @@ export default function NavBar({
             />
 
             <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm shadow-slate-100/80">
-                <div className="max-w-5xl mx-auto px-5 h-16 flex items-center justify-between gap-4">
+                <div className="max-w-5xl mx-auto px-5 h-[4.5rem] flex items-center justify-between gap-4">
 
                     {/* ── GAUCHE : Logo ───────────────────────────────────── */}
                     <button
                         onClick={() => onNavigate('oral')}
                         className="flex items-center gap-2.5 flex-shrink-0 group"
                     >
-                        <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-2 rounded-xl shadow-md shadow-blue-500/20 group-hover:shadow-blue-500/30 transition-all group-hover:scale-105">
-                            <Mic className="w-4 h-4 text-white" />
-                        </div>
-                        <span className="text-lg font-bold tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">
+                        <img src="/logo.png" alt="Auditio logo" className="w-11 h-11 rounded-xl shadow-sm ring-1 ring-slate-900/5 group-hover:shadow-md transition-all group-hover:scale-105" />
+                        <span className="text-xl font-bold tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">
                             Auditio
                         </span>
                         {!user && (
@@ -466,7 +464,7 @@ export default function NavBar({
                                     >
                                         <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)] -translate-x-[150%] group-hover:animate-[shimmer_1.5s_infinite]" />
                                         <Crown className="w-4 h-4 text-orange-50 relative z-10" />
-                                        <span className="relative z-10 drop-shadow-sm">Devenir Mentor</span>
+                                        <span className="relative z-10 drop-shadow-sm">Devenir Pro</span>
                                     </button>
                                 )}
 

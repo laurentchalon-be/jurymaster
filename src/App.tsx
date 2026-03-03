@@ -486,7 +486,7 @@ export default function App() {
         if (fnError) throw fnError;
 
         if (data?.quota_reached) {
-          setError("⏳ Quota journalier de 5 minutes atteint. L'usage gratuit est limité pour cet appareil ou ce compte. Revenez demain ou devenez Mentor !");
+          setError("⏳ Quota journalier de 5 minutes atteint. L'usage gratuit est limité pour cet appareil ou ce compte. Revenez demain ou devenez Pro !");
           setIsStarting(false);
           return;
         }
@@ -809,7 +809,7 @@ export default function App() {
             </div>
             <h3 className="text-xl font-bold text-center text-slate-900 mb-2">Limite quotidienne atteinte</h3>
             <p className="text-slate-500 text-center text-sm mb-8">
-              Vous avez épuisé vos sessions pour aujourd'hui. Revenez demain ou devenez Mentor pour un {user ? 'accès illimité' : 'accès étendu'} et d'autres avantages exclusifs.
+              Vous avez épuisé vos sessions pour aujourd'hui. Revenez demain ou devenez Pro pour un {user ? 'accès illimité' : 'accès étendu'} et d'autres avantages exclusifs.
             </p>
             <div className="flex flex-col gap-3">
               <button
@@ -821,7 +821,7 @@ export default function App() {
                 {user && <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)] -translate-x-[150%] animate-[shimmer_2s_infinite]" />}
                 <span className="relative z-10 flex items-center justify-center gap-2 drop-shadow-sm">
                   {user && <Crown className="w-5 h-5 text-orange-50" />}
-                  {user ? 'Devenir Mentor' : 'Créer un compte gratuit'}
+                  {user ? 'Devenir Pro' : 'Créer un compte gratuit'}
                 </span>
               </button>
               <button
@@ -1073,7 +1073,7 @@ export default function App() {
                   <div>
                     <p className="font-semibold text-slate-800 text-sm">⏱️ Session de 5 min écoulée</p>
                     <p className="text-slate-500 text-xs mt-0.5">
-                      Passez à l'abonnement <span className="font-semibold text-indigo-600">Mentor</span> pour des sessions de <strong>15 minutes</strong> sans interruption.
+                      Passez à l'abonnement <span className="font-semibold text-indigo-600">Pro</span> pour des sessions de <strong>15 minutes</strong> sans interruption.
                     </p>
                   </div>
                 </div>
@@ -1081,7 +1081,7 @@ export default function App() {
                   onClick={() => { setModalReason('launch'); setModalOpen(true); }}
                   className="flex-shrink-0 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-md shadow-indigo-200 whitespace-nowrap"
                 >
-                  ⭐ Devenir Mentor
+                  ⭐ Devenir Pro
                 </button>
               </div>
             )}
