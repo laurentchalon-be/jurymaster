@@ -6,7 +6,15 @@ const DAILY_QUOTA_SECONDS = 5 * 60; // 5 minutes
 
 // ─── Hachage IP (RGPD-friendly : pseudonymisation, jamais stockée en clair) ──
 async function hashIp(ip: string): Promise<string> {
-    const salt = Deno.env.get('IP_HASH_SALT') ?? 'auditio-default-salt-v1';
+    const salt = Deno.env.get('IP_HASH_SALT');
+    if (!salt) {
+        console.error('[security] IP_HASH_SALT secret is not configured!');
+        // Use a runtime-derived fallback instead of a hardcoded value visible in source code
+        const fallback = Deno.env.get('SUPABASE_URL') ?? 'emergency-fallback';
+        const fallbackData = new TextEncoder().encode(ip + fallback);
+        const fb = await crypto.subtle.digest('SHA-256', fallbackData);
+        return Array.from(new Uint8Array(fb)).map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 32);
+    }
     const data = new TextEncoder().encode(ip + salt);
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
