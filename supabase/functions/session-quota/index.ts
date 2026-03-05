@@ -2,7 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 // Quota journalier en secondes pour un connecté non-pro
-const DAILY_QUOTA_SECONDS = 5 * 60; // 5 minutes
+const DAILY_QUOTA_SECONDS = 10 * 60; // 10 minutes
 
 // ─── Hachage IP (RGPD-friendly : pseudonymisation, jamais stockée en clair) ──
 async function hashIp(ip: string): Promise<string> {
