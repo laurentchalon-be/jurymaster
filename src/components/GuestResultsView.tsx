@@ -1,8 +1,8 @@
 import React from 'react';
-import { Lock, ShieldCheck } from 'lucide-react';
+import { Lock, ShieldCheck, Eye } from 'lucide-react';
 import {
     Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-    ResponsiveContainer, Tooltip
+    ResponsiveContainer,
 } from 'recharts';
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -24,53 +24,66 @@ interface GuestResultsViewProps {
     onContinueDemo: () => void;
 }
 
-// ── Palette selon score ───────────────────────────────────────────────────────
-function getPalette(score: number) {
-    let mention = '⚠️ À travailler';
-    if (score >= 14) mention = '✅ Très bien';
-    else if (score >= 10) mention = '📈 Bien';
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
-    return {
-        ring: '#3b82f6', bg: 'from-blue-600 to-indigo-600',
-        badge: 'bg-blue-50 text-blue-700 border-blue-200', mention
-    };
+/** Renvoie la couleur du score selon sa valeur (/20) */
+function scoreColor(score: number): string {
+    if (score >= 14) return '#22c55e'; // vert
+    if (score >= 10) return '#f59e0b'; // amber
+    return '#ef4444';                  // rouge
 }
 
-function SkeletonLine({ width = 'w-full' }: { width?: string }) {
-    return <div className={`h-2.5 bg-slate-200 rounded-full ${width} animate-pulse`} />;
+/** Barre de progression colorée */
+function ScoreBar({ score }: { score: number }) {
+    return (
+        <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+            <div
+                className="h-2 rounded-full transition-all duration-700"
+                style={{ width: `${(score / 20) * 100}%`, backgroundColor: scoreColor(score) }}
+            />
+        </div>
+    );
 }
 
-// Tooltip personnalisé pour le radar
-function CustomTooltip({ active, payload }: any) {
-    if (active && payload?.length) {
-        return (
-            <div className="bg-white border border-slate-200 rounded-xl px-3 py-2 shadow-lg text-xs">
-                <p className="font-semibold text-slate-700">{payload[0].payload.subject}</p>
-                <p className="text-blue-600 font-bold">{payload[0].value}/20</p>
-            </div>
-        );
-    }
-    return null;
+/** Lignes de squelette animées (contenu flouté) */
+function SkeletonLines() {
+    return (
+        <div className="space-y-2 mt-3">
+            <div className="h-2.5 bg-slate-200 rounded-full w-full animate-pulse" />
+            <div className="h-2.5 bg-slate-200 rounded-full w-4/5 animate-pulse" />
+            <div className="h-2.5 bg-slate-200 rounded-full w-3/5 animate-pulse" />
+        </div>
+    );
 }
 
+// ── Composant principal ───────────────────────────────────────────────────────
 export default function GuestResultsView({ report, onSignIn, onContinueDemo }: GuestResultsViewProps) {
-    const palette = getPalette(report.globalScore);
-    if (report.globalScore >= 16) palette.mention = '🏆 Excellent';
 
-    // Arc SVG score ring
-    const radius = 52;
-    const circumference = 2 * Math.PI * radius;
-    const progress = (report.globalScore / 20) * circumference;
+    // Critère "révélé" : on prend le premier de la liste (généralement "Clarté")
+    // ou le critère avec le score le plus bas pour maximiser l'impact émotionnel
+    const revealedCriterion = report.radarData.reduce(
+        (worst, c) => (c.A < worst.A ? c : worst),
+        report.radarData[0]
+    );
+    const lockedCriteria = report.radarData.filter(c => c.subject !== revealedCriterion.subject);
+
+    const revealedColor = scoreColor(revealedCriterion.A);
+
+    // Mention du critère révélé
+    let revealedMention = '⚠️ À travailler';
+    if (revealedCriterion.A >= 16) revealedMention = '🏆 Excellent';
+    else if (revealedCriterion.A >= 14) revealedMention = '✅ Très bien';
+    else if (revealedCriterion.A >= 10) revealedMention = '📈 Passable';
 
     return (
-        <section className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <section className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-700">
 
             {/* En-tête */}
             <div className="flex items-center justify-between px-1">
                 <div>
                     <h2 className="text-2xl font-semibold tracking-tight text-slate-900">Aperçu Flash</h2>
                     <p className="text-slate-400 text-sm mt-0.5">
-                        Analyse basée sur ton oral · détail complet après connexion
+                        Analyse partielle · rapport complet après connexion
                     </p>
                 </div>
                 <span className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1.5 rounded-full text-xs font-semibold">
@@ -79,64 +92,124 @@ export default function GuestResultsView({ report, onSignIn, onContinueDemo }: G
                 </span>
             </div>
 
-            {/* ── Ligne 1 : Score + Radar ── */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-5">
+            {/* ── Ligne principale : Score flouté + Critère révélé ── */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-                {/* Score circle (visible) */}
-                <div className="md:col-span-2 bg-white rounded-3xl p-8 shadow-sm border border-slate-200 flex flex-col items-center justify-center gap-5">
-                    <div className="relative flex items-center justify-center w-40 h-40">
-                        <svg className="w-40 h-40 -rotate-90" viewBox="0 0 120 120">
-                            <circle cx="60" cy="60" r={radius} fill="none" stroke="#e2e8f0" strokeWidth="10" />
-                            <circle
-                                cx="60" cy="60" r={radius}
-                                fill="none"
-                                stroke={palette.ring}
-                                strokeWidth="10"
-                                strokeLinecap="round"
-                                strokeDasharray={`${progress} ${circumference}`}
-                                style={{ transition: 'stroke-dasharray 1.2s ease' }}
-                            />
-                        </svg>
-                        <div className="absolute flex flex-col items-center">
-                            <span className="text-5xl font-bold text-slate-900 leading-none tabular-nums">
-                                {report.globalScore}
-                            </span>
-                            <span className="text-base text-slate-400 font-medium">/20</span>
+                {/* Score global — FLOUTÉ */}
+                <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-200 flex flex-col items-center justify-center gap-4 relative overflow-hidden">
+                    {/* Badge "verrouillé" */}
+                    <div className="absolute top-4 right-4 flex items-center gap-1 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-full">
+                        <Lock className="w-3 h-3 text-slate-400" />
+                        <span className="text-[10px] font-semibold text-slate-400">Verrouillé</span>
+                    </div>
+
+                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Score global</p>
+
+                    {/* Chiffre flouté */}
+                    <div className="relative flex items-center justify-center w-36 h-36">
+                        <span
+                            className="text-7xl font-bold text-slate-900 select-none tabular-nums"
+                            style={{ filter: 'blur(12px)', userSelect: 'none' }}
+                        >
+                            {report.globalScore}
+                        </span>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
+                            <div className="bg-slate-900/80 backdrop-blur-sm rounded-2xl px-4 py-2.5 flex flex-col items-center gap-1 shadow-xl">
+                                <Lock className="w-5 h-5 text-white" />
+                                <span className="text-white text-xs font-bold whitespace-nowrap">Connecte-toi</span>
+                            </div>
                         </div>
                     </div>
 
-                    <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${palette.badge}`}>
-                        {palette.mention}
-                    </span>
+                    <span className="text-slate-400 text-sm font-medium">/20</span>
 
-                    {/* Point clé IA */}
-                    <div className="w-full bg-slate-50 rounded-2xl p-4 border border-slate-100">
-                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-2">
-                            🎯 Point clé du jury
+                    {/* Point clé IA — flouté aussi */}
+                    <div className="w-full bg-slate-50 rounded-2xl p-4 border border-slate-100 relative overflow-hidden">
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-2">🎯 Point clé du jury</p>
+                        <p
+                            className="text-sm text-slate-700 leading-relaxed select-none"
+                            style={{ filter: 'blur(4px)' }}
+                        >
+                            {report.pointCle}
                         </p>
-                        <p className="text-sm text-slate-700 leading-relaxed italic">
-                            "{report.pointCle}"
-                        </p>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="bg-white/90 border border-slate-200 text-slate-500 text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
+                                <Lock className="w-2.5 h-2.5" /> Visible après connexion
+                            </span>
+                        </div>
                     </div>
                 </div>
 
-                {/* Radar chart (visible — montre la forme générale) */}
-                <div className="md:col-span-3 bg-white rounded-3xl p-6 shadow-sm border border-slate-200 flex flex-col">
-                    <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-slate-900 font-semibold text-sm flex items-center gap-2">
-                            📊 Profil de compétences
-                        </h3>
-                        <span className="text-[10px] font-medium text-slate-400 bg-slate-100 px-2 py-1 rounded-full">
-                            Scores visibles
+                {/* Critère révélé — VISIBLE et mis en avant */}
+                <div className="bg-white rounded-3xl p-8 shadow-sm border-2 flex flex-col justify-center gap-5 relative"
+                    style={{ borderColor: revealedColor + '50' }}>
+
+                    {/* Badge "Révélé" */}
+                    <div className="absolute top-4 right-4 flex items-center gap-1 px-2.5 py-1 rounded-full border text-[10px] font-semibold"
+                        style={{
+                            backgroundColor: revealedColor + '15',
+                            borderColor: revealedColor + '40',
+                            color: revealedColor,
+                        }}>
+                        <Eye className="w-3 h-3" />
+                        Révélé
+                    </div>
+
+                    <div>
+                        <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">
+                            Critère le plus déterminant
+                        </p>
+                        <h3 className="text-2xl font-bold text-slate-900">{revealedCriterion.subject}</h3>
+                    </div>
+
+                    {/* Score mis en avant */}
+                    <div className="flex items-end gap-3">
+                        <span className="text-7xl font-bold leading-none tabular-nums" style={{ color: revealedColor }}>
+                            {revealedCriterion.A}
+                        </span>
+                        <span className="text-2xl text-slate-400 font-medium mb-2">/20</span>
+                        <span className="mb-2 text-sm font-semibold px-3 py-1 rounded-full border"
+                            style={{
+                                backgroundColor: revealedColor + '15',
+                                borderColor: revealedColor + '40',
+                                color: revealedColor,
+                            }}>
+                            {revealedMention}
                         </span>
                     </div>
-                    <div className="flex-1 w-full min-h-[240px]">
+
+                    <ScoreBar score={revealedCriterion.A} />
+
+                    {/* Message d'accroche contextuel */}
+                    <p className="text-slate-500 text-sm leading-relaxed">
+                        {revealedCriterion.A < 10
+                            ? `Ta ${revealedCriterion.subject.toLowerCase()} est ton point faible principal. Connecte-toi pour obtenir des conseils précis pour t'améliorer.`
+                            : revealedCriterion.A < 14
+                                ? `Bonne base en ${revealedCriterion.subject.toLowerCase()}, mais il y a une marge de progression. Vois l'analyse complète pour savoir comment progresser.`
+                                : `Belle performance en ${revealedCriterion.subject.toLowerCase()} ! Connecte-toi pour voir tes autres points forts et axes d'amélioration.`
+                        }
+                    </p>
+                </div>
+            </div>
+
+            {/* ── Radar (silhouette seulement, pas de tooltip) + critères verrouillés ── */}
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-5">
+
+                {/* Radar — visible mais sans labels de score, juste la forme */}
+                <div className="md:col-span-2 bg-white rounded-3xl p-6 shadow-sm border border-slate-200 flex flex-col">
+                    <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-slate-900 font-semibold text-sm">📊 Profil de compétences</h3>
+                        <span className="text-[10px] font-medium text-slate-400 bg-slate-100 px-2 py-1 rounded-full">
+                            Aperçu
+                        </span>
+                    </div>
+                    <div className="flex-1 w-full min-h-[200px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <RadarChart cx="50%" cy="50%" outerRadius="70%" data={report.radarData}>
                                 <PolarGrid stroke="#e2e8f0" />
                                 <PolarAngleAxis
                                     dataKey="subject"
-                                    tick={{ fill: '#64748b', fontSize: 11, fontWeight: 500 }}
+                                    tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 500 }}
                                 />
                                 <PolarRadiusAxis
                                     angle={30}
@@ -147,85 +220,72 @@ export default function GuestResultsView({ report, onSignIn, onContinueDemo }: G
                                 <Radar
                                     name="Score"
                                     dataKey="A"
-                                    stroke={palette.ring}
-                                    fill={palette.ring}
-                                    fillOpacity={0.18}
+                                    stroke="#94a3b8"
+                                    fill="#94a3b8"
+                                    fillOpacity={0.15}
                                     strokeWidth={2}
+                                    strokeDasharray="4 2"
                                 />
-                                <Tooltip content={<CustomTooltip />} />
                             </RadarChart>
                         </ResponsiveContainer>
                     </div>
-                </div>
-            </div>
-
-            {/* ── Ligne 2 : 5 cartes critères (noms + scores visibles, explications verrouillées) ── */}
-            <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
-                <div className="flex items-center justify-between mb-5">
-                    <h3 className="text-slate-900 font-semibold flex items-center gap-2">
-                        Détail par critère
-                    </h3>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full">
-                        <Lock className="w-2.5 h-2.5" />
-                        Analyses verrouillées
-                    </span>
+                    <p className="text-center text-[10px] text-slate-400 mt-1">
+                        Scores exacts visibles après connexion
+                    </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {report.radarData.map((criterion) => (
-                        <div key={criterion.subject} className="bg-slate-50 rounded-2xl p-5 border border-slate-100 relative overflow-hidden">
-                            {/* En-tête visible : nom + score */}
-                            <div className="flex items-center justify-between mb-3">
-                                <h4 className="font-semibold text-slate-800 text-sm">{criterion.subject}</h4>
-                                <span
-                                    className="font-bold text-sm px-2.5 py-1 rounded-lg"
-                                    style={{
-                                        backgroundColor: `${getPalette(criterion.A).ring}18`,
-                                        color: getPalette(criterion.A).ring
-                                    }}
-                                >
-                                    {criterion.A}/20
-                                </span>
-                            </div>
+                {/* Critères verrouillés */}
+                <div className="md:col-span-3 bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-slate-900 font-semibold text-sm">Détail par critère</h3>
+                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full">
+                            <Lock className="w-2.5 h-2.5" />
+                            {lockedCriteria.length} critères verrouillés
+                        </span>
+                    </div>
 
-                            {/* Barre de progression (visible) */}
-                            <div className="w-full bg-slate-200 rounded-full h-1.5 mb-3">
-                                <div
-                                    className="h-1.5 rounded-full transition-all duration-700"
-                                    style={{
-                                        width: `${(criterion.A / 20) * 100}%`,
-                                        backgroundColor: getPalette(criterion.A).ring
-                                    }}
-                                />
-                            </div>
-
-                            {/* Explication verrouillée */}
-                            <div className="relative">
-                                <div className="space-y-1.5 blur-[4px] select-none pointer-events-none">
-                                    <SkeletonLine width="w-full" />
-                                    <SkeletonLine width="w-4/5" />
-                                    <SkeletonLine width="w-3/5" />
+                    <div className="space-y-3">
+                        {lockedCriteria.map((criterion) => (
+                            <div key={criterion.subject} className="bg-slate-50 rounded-2xl p-4 border border-slate-100 relative overflow-hidden">
+                                <div className="flex items-center justify-between mb-2">
+                                    <h4 className="font-semibold text-slate-800 text-sm">{criterion.subject}</h4>
+                                    {/* Score flouté */}
+                                    <span
+                                        className="font-bold text-sm px-2.5 py-1 rounded-lg bg-slate-200 text-slate-200 select-none"
+                                        style={{ filter: 'blur(5px)' }}
+                                    >
+                                        {criterion.A}/20
+                                    </span>
                                 </div>
-                                <div className="absolute inset-0 flex items-center justify-center">
+                                {/* Barre de progression floue */}
+                                <div className="w-full bg-slate-200 rounded-full h-1.5 mb-2" style={{ filter: 'blur(1px)' }}>
+                                    <div
+                                        className="h-1.5 rounded-full"
+                                        style={{ width: `${(criterion.A / 20) * 100}%`, backgroundColor: '#cbd5e1' }}
+                                    />
+                                </div>
+                                <SkeletonLines />
+                                {/* Overlay verrou */}
+                                <div className="absolute inset-0 flex items-center justify-end pr-4">
                                     <div className="flex items-center gap-1 bg-white/90 border border-slate-200 px-2.5 py-1 rounded-full shadow-sm">
                                         <Lock className="w-2.5 h-2.5 text-slate-400" />
                                         <span className="text-[10px] font-semibold text-slate-500">Connecte-toi pour lire</span>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
 
             {/* ── Bannière CTA ── */}
-            <div className={`bg-gradient-to-r ${palette.bg} rounded-3xl p-7 flex flex-col md:flex-row items-center justify-between gap-6 shadow-lg`}>
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-7 flex flex-col md:flex-row items-center justify-between gap-6 shadow-lg">
                 <div className="text-center md:text-left">
                     <h3 className="text-white text-xl font-bold mb-1">
-                        Débloque ton analyse détaillée — gratuitement
+                        Débloque ton analyse complète — gratuitement
                     </h3>
                     <p className="text-white/80 text-sm max-w-sm leading-relaxed">
-                        Radar de compétences, détection des tics de langage, et conseils de jury personnalisés t'attendent.
+                        Score global, {lockedCriteria.length} critères détaillés, tics de langage et conseils personnalisés du jury t'attendent.
                     </p>
                 </div>
 
@@ -241,7 +301,7 @@ export default function GuestResultsView({ report, onSignIn, onContinueDemo }: G
                             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                         </svg>
-                        Se connecter pour voir l'analyse complète
+                        Se connecter — C'est gratuit
                     </button>
 
                     <button

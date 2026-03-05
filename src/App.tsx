@@ -65,6 +65,28 @@ export default function App() {
   // Quota journalier de l'utilisateur connecté (en secondes)
   const [quotaSecondsUsed, setQuotaSecondsUsed] = useState(0);
 
+  // ─── Config site (maintenance, whitelist) depuis Supabase ───────────────────
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [whitelistedEmails, setWhitelistedEmails] = useState<string[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data, error } = await (supabase as any)
+          .from('site_config')
+          .select('key, value')
+          .in('key', ['maintenance_mode', 'whitelisted_emails']);
+        if (error || !data) return;
+        for (const row of (data as Array<{ key: string; value: any }>)) {
+          if (row.key === 'maintenance_mode') setMaintenanceMode(row.value === true);
+          if (row.key === 'whitelisted_emails') setWhitelistedEmails(row.value as string[]);
+        }
+      } catch (e) {
+        console.error('[site_config] Erreur chargement:', e);
+      }
+    })();
+  }, []);
+
   const sessionStartTimeRef = useRef<number>(0);
   const isProModeRef = useRef(false);
   const isGuestModeRef = useRef(true);
@@ -705,15 +727,11 @@ export default function App() {
   }
 
   // ─── Mode maintenance ──────────────────────────────────────────────────────────
-  const MAINTENANCE_MODE = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
-  const WHITELISTED_EMAILS = [
-    'laurent.chalon.nl25@gmail.com',
-    'laurentchalon1@gmail.com',
-    'lauuchalon@gmail.com',
-  ];
-  const isWhitelisted = user?.email && WHITELISTED_EMAILS.includes(user.email.toLowerCase());
+  // maintenanceMode et whitelistedEmails sont chargés depuis Supabase (table site_config)
+  // Pour activer/désactiver ou modifier la whitelist : UPDATE public.site_config SET value = ... WHERE key = ...
+  const isWhitelisted = user?.email && whitelistedEmails.map(e => e.toLowerCase()).includes(user.email.toLowerCase());
 
-  if (MAINTENANCE_MODE && !isWhitelisted) {
+  if (maintenanceMode && !isWhitelisted) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6">
         <div className="max-w-md w-full text-center space-y-6">

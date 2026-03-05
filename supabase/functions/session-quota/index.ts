@@ -1,5 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from "jsr:@supabase/supabase-js@2";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 // Quota journalier en secondes pour un connecté non-pro
 const DAILY_QUOTA_SECONDS = 5 * 60; // 5 minutes
@@ -26,7 +26,7 @@ function extractIp(req: Request): string | null {
 }
 
 // Auto-nettoyage : supprime les entrées de plus de 7 jours (probabiliste ~1%)
-async function maybeCleanup(supabaseAdmin: ReturnType<typeof createClient>) {
+async function maybeCleanup(supabaseAdmin: SupabaseClient) {
     if (Math.random() > 0.01) return;
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - 7);
@@ -195,32 +195,18 @@ Deno.serve(async (req: Request) => {
                 });
             }
 
-            // Enregistrement par IP hashée (upsert indépendant)
+            // Enregistrement par IP hashée
             if (ipHash) {
-                const { error: ipUpsertErr } = await supabaseAdmin
-                    .from("daily_quota_usage")
-                    .upsert(
-                        {
-                            entity_id: ipHash,
-                            entity_type: "ip_hash",
-                            usage_date: today,
-                            seconds_used: secondsToAdd,
-                        },
-                        {
-                            onConflict: "entity_id,entity_type,usage_date",
-                            ignoreDuplicates: false,
-                        }
-                    );
-                // On ne bloque pas si ça échoue, on log juste
-                if (ipUpsertErr) console.error("[quota] IP hash upsert error:", ipUpsertErr);
-                else {
-                    // Incrément propre via RPC dédiée (évite les race conditions)
+                // Incrément propre via RPC dédiée (évite les race conditions et les remises à zéro)
+                try {
                     await supabaseAdmin.rpc("increment_ip_quota_usage", {
                         p_ip_hash: ipHash,
                         p_date: today,
                         p_seconds: secondsToAdd,
                         p_max: DAILY_QUOTA_SECONDS,
-                    }).catch(e => console.error("[quota] increment_ip_quota_usage error:", e));
+                    });
+                } catch (e) {
+                    console.error("[quota] increment_ip_quota_usage error:", e);
                 }
             }
 

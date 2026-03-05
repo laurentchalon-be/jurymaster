@@ -1,5 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from "jsr:@supabase/supabase-js@2";
+import { createClient } from "@supabase/supabase-js";
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -41,7 +41,7 @@ const GUEST_SCHEMA = {
         },
         pointCle: {
             type: "STRING",
-            description: "Une seule phrase d'accroche constructive (max 140 caractères), sans rire ni moquerie."
+            description: "Une seule phrase d'accroche constructive (max 140 caractères)"
         },
         radarData: {
             type: "ARRAY",

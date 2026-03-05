@@ -1,0 +1,11 @@
+{
+    // Enable Deno only for Edge Functions — avoids conflicts with the React/Node frontend
+    "deno.enablePaths": [
+        "supabase/functions"
+    ],
+    "deno.lint": true,
+    "deno.unstable": [],
+    "[typescript]": {
+        "editor.defaultFormatter": "denoland.vscode-deno"
+    }
+}
